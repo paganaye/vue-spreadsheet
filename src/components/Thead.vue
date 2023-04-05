@@ -2,42 +2,26 @@
   <thead class="thead" @mouseup="handleUpDragToFill($event)">
     <tr>
       <th class="index" v-if="tbodyCheckbox">
-        <input
-          type="checkbox"
-          :id="`checkbox-all-${currentTable}`"
-          v-model="checkedAll"
-          @change="checkedAllRow"
-        />
+        <input type="checkbox" :id="`checkbox-all-${currentTable}`" v-model="checkedAll" @change="checkedAllRow" />
         <label :for="`checkbox-all-${currentTable}`"></label>
       </th>
       <th v-if="tbodyIndex" class="index" key="th-index"></th>
-      <template v-for="(header, colIndex) in headers">
-        <th
-          class="th"
-          :class="{
-            disabled: header.disabled,
-            highlight_spreadsheet: theadHighlight.includes(colIndex),
-            dragged: beforeChangeSize.col === colIndex,
-          }"
-          :ref="'th-' + colIndex"
-          :key="header.headerKey"
-          :style="[header.style, (header.style.top = headerTop > 0 ? headerTop + 'px' : 'auto')]"
-        >
+      <template v-for="(header, colIndex) in headers" :key="header.headerKey">
+        <th class="th" :class="{
+          disabled: header.disabled,
+          highlight_spreadsheet: theadHighlight.includes(colIndex),
+          dragged: beforeChangeSize.col === colIndex,
+        }" :ref="'th-' + colIndex"
+          :style="[header.style, (header.style.top = headerTop > 0 ? headerTop + 'px' : 'auto')]">
           <span>{{ header.headerName }}</span>
 
-          <template
-            v-if="
-              submenuThead &&
-              submenuThead.find((sub) => sub.disabled.includes(header.headerKey) == 0)
-            "
-          >
-            <button
-              @click="handleContextMenuTd($event, header.headerKey, colIndex)"
-              :class="{
-                active: submenuThead && submenuStatusThead && colIndex === submenuEnableCol,
-              }"
-              class="button_submenu button_submenu-2"
-            >
+          <template v-if="
+            submenuThead &&
+            submenuThead.find((sub) => sub.disabled.includes(header.headerKey) == 0)
+          ">
+            <button @click="handleContextMenuTd($event, header.headerKey, colIndex)" :class="{
+              active: submenuThead && submenuStatusThead && colIndex === submenuEnableCol,
+            }" class="button_submenu button_submenu-2">
               <span class="icon icon_menu">
                 <i class="bullet bullet-1"></i>
                 <i class="bullet bullet-2"></i>
@@ -47,70 +31,48 @@
           </template>
 
           <template v-if="sortHeader && disableSortThead.indexOf(header.headerKey) === -1">
-            <button
-              @click="handleSort($event, header, colIndex)"
-              :class="{
-                sort_A: header.activeSort === 'A',
-                sort_Z: header.activeSort === 'Z',
-              }"
-              class="button_submenu"
-            >
+            <button @click="handleSort($event, header, colIndex)" :class="{
+              sort_A: header.activeSort === 'A',
+              sort_Z: header.activeSort === 'Z',
+            }" class="button_submenu">
               <i class="icon sort"></i>
               <i class="icon sort"></i>
             </button>
           </template>
 
           <transition name="fade">
-            <div
-              v-if="
-                submenuThead &&
-                submenuStatusThead &&
-                colIndex === submenuEnableCol &&
-                submenuThead.find((sub) => sub.disabled.includes(header.headerKey) == 0)
-              "
-              :key="'submenu-' + header.headerKey"
-              class="submenu_wrap"
-            >
+            <div v-if="
+              submenuThead &&
+              submenuStatusThead &&
+              colIndex === submenuEnableCol &&
+              submenuThead.find((sub) => sub.disabled.includes(header.headerKey) == 0)
+            " :key="'submenu-' + header.headerKey" class="submenu_wrap">
               <template v-for="(sub, index) in submenuThead">
                 <template v-if="sub.type === 'button'">
-                  <button
-                    v-if="sub.disabled.includes(header.headerKey) == 0"
-                    :key="index"
-                    @click.stop="handleClickSubmenu($event, header, colIndex, sub.function)"
-                  >
+                  <button v-if="sub.disabled.includes(header.headerKey) == 0" :key="index"
+                    @click.stop="handleClickSubmenu($event, header, colIndex, sub.function)">
                     {{ sub.value }}
                   </button>
                 </template>
                 <template v-if="sub.type === 'select'">
-                  <div
-                    class="menu_option"
-                    :key="index"
-                    v-if="sub.disabled.includes(header.headerKey) == 0"
-                  >
-                    <template v-if="sub.subtitle"
-                      ><h3>{{ sub.subtitle }}</h3></template
-                    >
+                  <div class="menu_option" :key="index" v-if="sub.disabled.includes(header.headerKey) == 0">
+                    <template v-if="sub.subtitle">
+                      <h3>{{ sub.subtitle }}</h3>
+                    </template>
                     <select v-model="sub.value">
-                      <option
-                        v-for="(option, index) in sub.selectOptions"
-                        :value="option.value"
-                        :key="index"
-                      >
+                      <option v-for="(option, index) in sub.selectOptions" :value="option.value" :key="index">
                         {{ option.label }}
                       </option>
                     </select>
-                    <button
-                      :style="sub.buttonOption.style"
-                      @click.stop="
-                        handleClickSubmenu(
-                          $event,
-                          header,
-                          colIndex,
-                          sub.buttonOption.function,
-                          sub.value
-                        )
-                      "
-                    >
+                    <button :style="sub.buttonOption.style" @click.stop="
+                      handleClickSubmenu(
+                        $event,
+                        header,
+                        colIndex,
+                        sub.buttonOption.function,
+                        sub.value
+                      )
+                    ">
                       {{ sub.buttonOption.value }}
                     </button>
                   </div>
@@ -119,13 +81,9 @@
             </div>
           </transition>
 
-          <button
-            :ref="'resize-' + colIndex"
-            @mousedown="handleDownChangeSize($event, header, colIndex)"
-            @mouseup="handleUpDragToFill($event, header, colIndex)"
-            class="resize"
-            :class="{ active: header.active }"
-          ></button>
+          <button :ref="'resize-' + colIndex" @mousedown="handleDownChangeSize($event, header, colIndex)"
+            @mouseup="handleUpDragToFill($event, header, colIndex)" class="resize"
+            :class="{ active: header.active }"></button>
         </th>
       </template>
     </tr>
@@ -197,7 +155,7 @@ export default {
     removeClass(params, colIndex) {
       this.headers.forEach((header, index) => {
         if (index !== colIndex) {
-          this.$set(this.headers[index], "activeSort", "");
+          this.headers[index].activeSort = "";
         }
       });
     },
@@ -257,9 +215,9 @@ export default {
         element.style.setProperty("--dragHeaderHeight", "100%");
 
         // set new size on header
-        this.$set(this.headers[this.beforeChangeSize.col].style, "width", `${this.newSize}px`);
-        this.$set(this.headers[this.beforeChangeSize.col].style, "minWidth", `${this.newSize}px`);
-        this.$set(this.headers[this.beforeChangeSize.col], "active", false);
+        this.headers[this.beforeChangeSize.col].style.width = `${this.newSize}px`;
+        this.headers[this.beforeChangeSize.col].style.minWidth = `${this.newSize}px`;
+        this.headers[this.beforeChangeSize.col].active = false;
 
         this.beforeChangeSize = {};
         this.$emit("handle-up-drag-size-header", event, this.headers);
@@ -269,9 +227,9 @@ export default {
       const header = h;
 
       if (!header.activeSort || header.activeSort === "Z") {
-        this.$set(this.headers[colIndex], "activeSort", "A");
+        this.headers[colIndex].activeSort = "A";
       } else {
-        this.$set(this.headers[colIndex], "activeSort", "Z");
+        this.headers[colIndex].activeSort = "Z";
       }
 
       this.removeClass("activeSort", colIndex);
@@ -320,25 +278,31 @@ export default {
   border-top: 0;
   border-right: 1px solid white;
   transition: width ease 0.5s, background ease 0.5s;
+
   &.dragged .resize {
     opacity: 1;
     position: fixed;
     top: auto;
+
     &:after {
       opacity: 1;
       visibility: visible;
     }
   }
+
   &.disabled {
     pointer-events: none;
+
     span {
       background: #cccccc;
       opacity: 0.5;
     }
   }
+
   &.highlight_spreadsheet {
     background: #d5ddec;
   }
+
   span {
     display: block;
     width: calc(100% - 30px);
@@ -347,6 +311,7 @@ export default {
     text-overflow: ellipsis;
   }
 }
+
 .resize {
   position: absolute;
   top: 0;
@@ -361,9 +326,11 @@ export default {
   outline: none;
   opacity: 0;
   transition: opacity ease 0.5s;
+
   &:hover {
     opacity: 1;
   }
+
   &:after {
     content: "";
     display: block;
@@ -376,6 +343,7 @@ export default {
     visibility: hidden;
   }
 }
+
 .submenu_wrap {
   position: absolute;
   top: 45px;
@@ -386,6 +354,7 @@ export default {
   z-index: 20;
   padding: 0 0 0 0;
   box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.1);
+
   button {
     display: block;
     height: 30px;
@@ -398,25 +367,30 @@ export default {
     border: 1px solid #eee;
     outline: none;
     cursor: pointer;
+
     &:hover {
       background: #e7ecf5;
     }
+
     &:focus {
       box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
     }
   }
+
   .menu_option {
     background: #eee;
     margin: 7px auto 0;
     padding: 10px 8px;
     border-top: 1px solid #eee;
     border-bottom: 1px solid #eee;
+
     h3 {
       font-size: 12px;
       font-weight: 400;
       line-height: 1;
       margin: 0;
     }
+
     select {
       display: block;
       width: 100%;
@@ -437,13 +411,17 @@ export default {
   outline: none;
   border: 0;
   padding: 0;
+
   &-2 {
     right: 10px;
-    & + .button_submenu {
+
+    &+.button_submenu {
       right: 25px;
     }
   }
+
   cursor: pointer;
+
   .sort {
     display: block;
     position: absolute;
@@ -453,6 +431,7 @@ export default {
     font-size: 16px;
     opacity: 0.4;
     transition: all ease 0.5s;
+
     &:before,
     &:after {
       content: "";
@@ -462,42 +441,52 @@ export default {
       background: #000;
       transform: rotate(45deg) translate(0px, -1px);
     }
+
     &:after {
       transform: rotate(135deg) translate(0px, 3px);
     }
-    & + .sort {
+
+    &+.sort {
       top: 25px;
       transform: rotate(180deg);
       right: 3px;
     }
   }
+
   &.sort_Z .sort {
     opacity: 1;
+
     &:after,
     &:before {
       background: #000;
     }
-    & + .sort {
+
+    &+.sort {
       opacity: 0.4;
+
       &:before,
       &:after {
         background: #000;
       }
     }
   }
-  &.sort_A .sort + .sort {
+
+  &.sort_A .sort+.sort {
     opacity: 1;
+
     &:after,
     &:before {
       background: #000;
     }
   }
+
   .icon_menu {
     width: 10px;
     display: flex;
     flex-direction: column;
     height: 100%;
     justify-content: center;
+
     .bullet {
       display: block;
       width: 3px;
@@ -506,13 +495,16 @@ export default {
       background: #555;
       border-radius: 50%;
       transition: all ease 0.5s;
+
       &-2 {
         margin: 2px auto;
       }
     }
   }
+
   &.active .icon_menu .bullet {
     background: #000;
+
     &-2 {
       background: #000;
     }
@@ -533,6 +525,7 @@ export default {
 .fade-leave-active {
   transition: opacity 0.5s;
 }
+
 .fade-enter,
 .fade-leave-to {
   opacity: 0;

@@ -1,9 +1,8 @@
 <template>
   <tbody>
-    <template v-for="(row, rowIndex) in tbodyData">
+    <template v-for="(row, rowIndex) in tbodyData" :key="`row${rowIndex}`">
       <tr
         class="table_row"
-        :key="`row${rowIndex}`"
         :class="{
           checked_row:
             'vuetable_checked' in tbodyData[rowIndex] &&

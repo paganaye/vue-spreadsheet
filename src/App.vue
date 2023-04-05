@@ -30,12 +30,12 @@
 <script>
 /* eslint-disable */
 import VueTable from './components/VueTable.vue';
-import exempleData from './data';
+import exampleData from './data';
 
 export default {
   name: 'VueSpreadsheet',
   data() {
-    return exempleData;
+    return exampleData;
   },
   components: {
     VueTable,

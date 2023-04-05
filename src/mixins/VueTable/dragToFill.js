@@ -8,7 +8,7 @@ export const dragToFill = {
   methods: {
     handleDownDragToFill(event, header, col, rowIndex) {
       this.storeCopyDatas = [];
-      this.$set(this.value[rowIndex][header], "active", true);
+      this.modelValue[rowIndex][header].active = true;
       this.eventDrag = true;
 
       if (!this.selectedCoordCells && !this.selectedMultipleCell) {

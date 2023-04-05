@@ -72,7 +72,7 @@ export default {
     },
     handleHoverTriangleComment(header, rowIndex) {
       if (!this.vueTableComment[rowIndex]) {
-        this.$set(this.vueTableComment, rowIndex, header);
+        this.vueTableComment[rowIndex] = header;
       }
     },
     handleOutTriangleComment() {
@@ -87,7 +87,7 @@ export default {
           element &&
           element.scrollWidth > element.clientWidth
         ) {
-          this.$set(this.vuetableTooltip, rowIndex, header);
+          this.vuetableTooltip[rowIndex] = header;
         }
       }
     },
